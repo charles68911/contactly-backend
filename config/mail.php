@@ -39,13 +39,20 @@ return [
 
         'smtp' => [
             'transport' => 'smtp',
-            'scheme' => env('MAIL_SCHEME'),
+            // Laravel 12 uses MAIL_SCHEME. MAIL_ENCRYPTION is kept as a
+            // compatibility alias so Gmail's documented "tls" setting works:
+            // tls => smtp (STARTTLS on 587), ssl => smtps (implicit TLS on 465).
+            'scheme' => env('MAIL_SCHEME') ?: match (env('MAIL_ENCRYPTION')) {
+                'ssl' => 'smtps',
+                'tls' => 'smtp',
+                default => null,
+            },
             'url' => env('MAIL_URL'),
             'host' => env('MAIL_HOST', '127.0.0.1'),
             'port' => env('MAIL_PORT', 2525),
             'username' => env('MAIL_USERNAME'),
             'password' => env('MAIL_PASSWORD'),
-            'timeout' => null,
+            'timeout' => env('MAIL_TIMEOUT', 15),
             'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url(env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
         ],
 

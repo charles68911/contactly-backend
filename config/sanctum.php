@@ -50,7 +50,10 @@ return [
     |
     */
 
-    'expiration' => null,
+    // Bearer tokens do not expire by default, so closing the browser or
+    // refreshing the frontend does not sign the user out. Set
+    // SANCTUM_EXPIRATION (minutes) only if intentional expiry is required.
+    'expiration' => env('SANCTUM_EXPIRATION'),
 
     /*
     |--------------------------------------------------------------------------
