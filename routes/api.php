@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AccountRecoveryController;
 use App\Http\Controllers\Api\Admin\UserManagementController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ContactController;
@@ -15,7 +16,15 @@ Route::post('/register', [AuthController::class, 'register'])->middleware('throt
 Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:6,1');
 
 // ========================================
-// PUBLIC FORGOT / RESET PASSWORD ROUTES
+// PUBLIC ACCOUNT RECOVERY ROUTES (email + account ID, no email delivery)
+// ========================================
+Route::post('/password/recovery/verify', [AccountRecoveryController::class, 'verify'])
+    ->middleware('throttle:5,1');
+Route::post('/password/recovery/reset', [AccountRecoveryController::class, 'reset'])
+    ->middleware('throttle:5,1');
+
+// ========================================
+// PUBLIC FORGOT / RESET PASSWORD ROUTES (legacy email flow)
 // ========================================
 Route::post('/password/forgot', [PasswordResetController::class, 'sendResetLink'])
     ->middleware('throttle:5,1');
