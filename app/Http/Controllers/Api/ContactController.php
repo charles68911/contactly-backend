@@ -17,11 +17,13 @@ class ContactController extends Controller
         $contacts = $request->user()
             ->contacts()
             ->when($search !== '', function ($query) use ($search) {
+                // whereLike() keeps the search case-insensitive on every
+                // driver: MySQL uses its CI collation, PostgreSQL uses ILIKE.
                 $query->where(function ($q) use ($search) {
-                    $q->where('first_name', 'LIKE', "%{$search}%")
-                        ->orWhere('last_name', 'LIKE', "%{$search}%")
-                        ->orWhere('email', 'LIKE', "%{$search}%")
-                        ->orWhere('phone', 'LIKE', "%{$search}%");
+                    $q->whereLike('first_name', "%{$search}%")
+                        ->orWhereLike('last_name', "%{$search}%")
+                        ->orWhereLike('email', "%{$search}%")
+                        ->orWhereLike('phone', "%{$search}%");
                 });
             })
             ->when($category !== '', function ($query) use ($category) {

@@ -1,8 +1,10 @@
 
 FROM dunglas/frankenphp:1-php8.4-bookworm AS base
 
+# pdo_pgsql is required for Neon PostgreSQL. pdo_mysql remains as a generic
+# driver and is not required by Neon; remove it if MySQL is no longer used.
 RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" \
-    && install-php-extensions pdo_mysql mbstring bcmath intl zip
+    && install-php-extensions pdo_pgsql pdo_mysql mbstring bcmath intl zip
 
 WORKDIR /app
 

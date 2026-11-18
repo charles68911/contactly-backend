@@ -29,9 +29,11 @@ class UserManagementController extends Controller
         $users = User::query()
             ->withCount('contacts')
             ->when($search !== '', function ($query) use ($search) {
+                // whereLike() keeps the search case-insensitive on every
+                // driver: MySQL uses its CI collation, PostgreSQL uses ILIKE.
                 $query->where(function ($q) use ($search) {
-                    $q->where('name', 'LIKE', "%{$search}%")
-                        ->orWhere('email', 'LIKE', "%{$search}%");
+                    $q->whereLike('name', "%{$search}%")
+                        ->orWhereLike('email', "%{$search}%");
                 });
             })
             ->latest('id')
